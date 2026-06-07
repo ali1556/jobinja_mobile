@@ -4,6 +4,7 @@ import '../models/job.dart';
 import '../widgets/job_card.dart';
 import '../widgets/loading_widget.dart';
 import 'job_detail_screen.dart';
+import 'profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -35,7 +36,21 @@ class _HomeScreenState extends State<HomeScreen> implements JobView {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Jobinja'), centerTitle: true),
+      appBar: AppBar(
+        title: Text('Jobinja'),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => ProfileScreen()),
+              );
+            },
+          ),
+        ],
+      ),
       body: Column(
         children: [
           Padding(

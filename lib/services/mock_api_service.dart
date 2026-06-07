@@ -1,16 +1,34 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user.dart';
 import '../models/job.dart';
 import '../models/company.dart';
 
 class MockApiService {
-  final List<User> _users = [];
+  List<User> _users = [];
   String? _currentToken;
   User? _currentUser;
 
   MockApiService() {
-    _users.add(User(id: 1, name: 'Ahmad Rezaei', email: 'ahmad@example.com'));
+    _loadUsersFromStorage();
+  }
+
+  Future<void> _loadUsersFromStorage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final usersJson = prefs.getStringList('saved_users') ?? [];
+    if (usersJson.isEmpty) {
+      _users = [User(id: 1, name: 'Ahmad Rezaei', email: 'ahmad@example.com')];
+      await _saveUsersToStorage();
+    } else {
+      _users = usersJson.map((json) => User.fromJson(jsonDecode(json) as Map<String, dynamic>)).toList();
+    }
+  }
+
+  Future<void> _saveUsersToStorage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final usersJson = _users.map((user) => jsonEncode(user.toJson())).toList();
+    await prefs.setStringList('saved_users', usersJson);
   }
 
   Future<Map<String, dynamic>> signup(String name, String email, String password) async {
@@ -18,9 +36,11 @@ class MockApiService {
     if (_users.any((u) => u.email == email)) {
       throw Exception('Email already exists');
     }
-    final newId = _users.length + 1;
+    final newId = _users.isEmpty ? 1 : _users.map((u) => u.id).reduce((a, b) => a > b ? a : b) + 1;
     final newUser = User(id: newId, name: name, email: email);
     _users.add(newUser);
+    await _saveUsersToStorage();
+
     _currentUser = newUser;
     _currentToken = 'mock_token_$newId';
     await _saveToken(_currentToken!);

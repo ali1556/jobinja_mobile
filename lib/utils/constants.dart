@@ -1,0 +1,1 @@
+// can hold app strings or colors
