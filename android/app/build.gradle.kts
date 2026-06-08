@@ -1,4 +1,64 @@
-plugins {
+android {
+    namespace = "com.example.jobinja_app"
+    compileSdk = flutter.compileSdkVersion
+    ndkVersion = flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17.toString()
+    }
+
+    defaultConfig {
+        applicationId = "com.example.jobinja_app"
+        minSdk = flutter.minSdkVersion
+        targetSdk = flutter.targetSdkVersion
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
+    }
+
+    buildTypes {
+        release {
+            signingConfig = signingConfigs.getByName("debug")
+        }
+    }
+android {
+    namespace = "com.example.jobinja_app"
+    compileSdk = flutter.compileSdkVersion
+    // ndkVersion = flutter.ndkVersion   // <-- COMMENT OUT OR DELETE THIS LINE
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17.toString()
+    }
+
+    defaultConfig {
+        applicationId = "com.example.jobinja_app"
+        minSdk = flutter.minSdkVersion
+        targetSdk = flutter.targetSdkVersion
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
+
+        // Disable all native build attempts
+        externalNativeBuild {
+            ndkBuild { abiFilters.clear() }
+            cmake   { abiFilters.clear() }
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig = signingConfigs.getByName("debug")
+        }
+    }
+}}plugins {
     id("com.android.application")
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
@@ -8,7 +68,7 @@ plugins {
 android {
     namespace = "com.example.jobinja_app"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    //ndkVersion = flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -28,6 +88,14 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+	externalNativeBuild {
+            ndkBuild {
+                abiFilters.clear()
+            }
+            cmake {
+                abiFilters.clear()
+            }
+        }
     }
 
     buildTypes {

@@ -9,16 +9,17 @@ class MockApiService {
   List<User> _users = [];
   String? _currentToken;
   User? _currentUser;
+  late Future<void> _usersLoaded; // tracks loading completion
 
   MockApiService() {
-    _loadUsersFromStorage();
+    _usersLoaded = _loadUsersFromStorage();
   }
 
   Future<void> _loadUsersFromStorage() async {
     final prefs = await SharedPreferences.getInstance();
     final usersJson = prefs.getStringList('saved_users') ?? [];
     if (usersJson.isEmpty) {
-      _users = [User(id: 1, name: 'Ahmad Rezaei', email: 'ahmad@example.com')];
+      _users = [User(id: 1, name: 'Ali Khavari', email: 'ali@khavari.com')];
       await _saveUsersToStorage();
     } else {
       _users = usersJson.map((json) => User.fromJson(jsonDecode(json) as Map<String, dynamic>)).toList();
@@ -32,6 +33,7 @@ class MockApiService {
   }
 
   Future<Map<String, dynamic>> signup(String name, String email, String password) async {
+    await _usersLoaded; // wait for users to be loaded
     await Future.delayed(const Duration(seconds: 1));
     if (_users.any((u) => u.email == email)) {
       throw Exception('Email already exists');
@@ -48,9 +50,10 @@ class MockApiService {
   }
 
   Future<Map<String, dynamic>> login(String email, String password) async {
+    await _usersLoaded; // wait for users to be loaded
     await Future.delayed(const Duration(seconds: 1));
     final user = _users.firstWhere(
-      (u) => u.email == email,
+          (u) => u.email == email,
       orElse: () => throw Exception('Invalid email or password'),
     );
     _currentUser = user;
@@ -81,6 +84,17 @@ class MockApiService {
         isRemote: true,
       ),
       Job(
+        id: 'job_4',
+        title: 'Ai Developer',
+        companyName: 'MiliGold',
+        companySlug: 'MiliGold',
+        location: 'Tehran',
+        contractType: 'Full-time',
+        salaryDisplay: 'Negotiable',
+        publishedAt: '2025-03-14',
+        isRemote: false,
+      ),
+      Job(
         id: 'job_2',
         title: 'Python Developer',
         companyName: 'Smart Data',
@@ -105,7 +119,7 @@ class MockApiService {
 
     if (keyword != null && keyword.isNotEmpty) {
       mockJobs = mockJobs.where((job) =>
-          job.title.contains(keyword) ||
+      job.title.contains(keyword) ||
           job.companyName.contains(keyword)).toList();
     }
     if (location != null && location.isNotEmpty) {
@@ -151,6 +165,7 @@ class MockApiService {
   }
 
   Future<User> getCurrentUser() async {
+    await _usersLoaded; // ensure users loaded before looking up by token
     if (_currentUser == null) {
       final token = await _getToken();
       if (token != null && token.startsWith('mock_token_')) {
