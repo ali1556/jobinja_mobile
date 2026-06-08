@@ -37,24 +37,20 @@ class _HomeScreenState extends State<HomeScreen> implements JobView {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Jobinja'),
+        title: Text('Jobinja', style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.person),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => ProfileScreen()),
-              );
-            },
+            icon: Icon(Icons.person, color: Colors.blue.shade700),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ProfileScreen())),
           ),
         ],
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
+          Container(
+            padding: EdgeInsets.all(12),
+            decoration: BoxDecoration(color: Colors.white, boxShadow: [BoxShadow(color: Colors.grey.shade200, blurRadius: 4, offset: Offset(0, 2))]),
             child: Row(
               children: [
                 Expanded(
@@ -62,17 +58,21 @@ class _HomeScreenState extends State<HomeScreen> implements JobView {
                     controller: _searchController,
                     decoration: InputDecoration(
                       hintText: 'Search job or company',
-                      border: OutlineInputBorder(),
-                      suffixIcon: IconButton(
-                        icon: Icon(Icons.search),
-                        onPressed: _loadJobs,
-                      ),
+                      prefixIcon: Icon(Icons.search, color: Colors.grey.shade500),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
+                      filled: true,
+                      fillColor: Colors.grey.shade100,
                     ),
+                    onSubmitted: (_) => _loadJobs(),
                   ),
                 ),
-                IconButton(
-                  icon: Icon(Icons.filter_list),
-                  onPressed: () => _showLocationFilter(),
+                SizedBox(width: 8),
+                Container(
+                  decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(30)),
+                  child: IconButton(
+                    icon: Icon(Icons.filter_list, color: Colors.blue.shade700),
+                    onPressed: () => _showLocationFilter(),
+                  ),
                 ),
               ],
             ),
@@ -81,21 +81,17 @@ class _HomeScreenState extends State<HomeScreen> implements JobView {
             child: _isLoading
                 ? LoadingWidget()
                 : _error != null
-                    ? Center(child: Text('Error: $_error'))
-                    : _jobs.isEmpty
-                        ? Center(child: Text('No jobs found'))
-                        : ListView.builder(
-                            itemCount: _jobs.length,
-                            itemBuilder: (ctx, i) => JobCard(
-                              job: _jobs[i],
-                              onTap: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => JobDetailScreen(jobId: _jobs[i].id),
-                                ),
-                              ),
-                            ),
-                          ),
+                ? Center(child: Text('Error: $_error', style: TextStyle(color: Colors.red)))
+                : _jobs.isEmpty
+                ? Center(child: Text('No jobs found', style: TextStyle(fontSize: 16, color: Colors.grey.shade600)))
+                : ListView.builder(
+              padding: EdgeInsets.symmetric(vertical: 8),
+              itemCount: _jobs.length,
+              itemBuilder: (ctx, i) => JobCard(
+                job: _jobs[i],
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => JobDetailScreen(jobId: _jobs[i].id))),
+              ),
+            ),
           ),
         ],
       ),
@@ -110,9 +106,7 @@ class _HomeScreenState extends State<HomeScreen> implements JobView {
         content: DropdownButton<String>(
           value: _selectedLocation.isEmpty ? null : _selectedLocation,
           hint: Text('All provinces'),
-          items: ['Tehran', 'Isfahan', 'Shiraz', 'Mashhad']
-              .map((loc) => DropdownMenuItem(value: loc, child: Text(loc)))
-              .toList(),
+          items: ['Tehran', 'Isfahan', 'Shiraz', 'Mashhad'].map((loc) => DropdownMenuItem(value: loc, child: Text(loc))).toList(),
           onChanged: (val) {
             setState(() => _selectedLocation = val ?? '');
             Navigator.pop(context);
@@ -123,12 +117,8 @@ class _HomeScreenState extends State<HomeScreen> implements JobView {
     );
   }
 
-  @override
-  void showJobs(List<Job> jobs) => setState(() { _jobs = jobs; _error = null; });
-  @override
-  void showLoading() => setState(() => _isLoading = true);
-  @override
-  void hideLoading() => setState(() => _isLoading = false);
-  @override
-  void onError(String message) => setState(() => _error = message);
+  @override void showJobs(List<Job> jobs) => setState(() { _jobs = jobs; _error = null; });
+  @override void showLoading() => setState(() => _isLoading = true);
+  @override void hideLoading() => setState(() => _isLoading = false);
+  @override void onError(String message) => setState(() => _error = message);
 }
