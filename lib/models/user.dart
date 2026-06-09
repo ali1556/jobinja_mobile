@@ -1,10 +1,19 @@
+import 'resume.dart';
+
 class User {
   final int id;
   final String name;
   final String email;
   final String? avatar;
+  final Resume? resume; // new field
 
-  User({required this.id, required this.name, required this.email, this.avatar});
+  User({
+    required this.id,
+    required this.name,
+    required this.email,
+    this.avatar,
+    this.resume,
+  });
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
@@ -12,6 +21,7 @@ class User {
       name: json['name'],
       email: json['email'],
       avatar: json['avatar'],
+      resume: json['resume'] != null ? Resume.fromJson(json['resume']) : null,
     );
   }
 
@@ -21,8 +31,7 @@ class User {
       'name': name,
       'email': email,
       'avatar': avatar,
+      'resume': resume?.toJson(),
     };
   }
-
-
 }

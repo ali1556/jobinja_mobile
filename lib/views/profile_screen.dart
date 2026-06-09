@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'resume_screen.dart';
 import '../presenters/profile_presenter.dart';
 import '../models/user.dart';
 import 'login_screen.dart';
@@ -94,6 +95,13 @@ class _ProfileScreenState extends State<ProfileScreen> implements ProfileView {
                 onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ContactScreen())),
                 icon: Icon(Icons.contact_mail),
                 label: Text('Contact Us'),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.blue, minimumSize: Size(double.infinity, 48), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+              ),
+              SizedBox(height: 12),
+              ElevatedButton.icon(
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ResumeScreen(user: _user!)),),
+                icon: Icon(Icons.description),
+                label: Text('My Resume'),
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.blue, minimumSize: Size(double.infinity, 48), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
               ),
               SizedBox(height: 24),
