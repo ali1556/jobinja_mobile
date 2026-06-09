@@ -1,4 +1,5 @@
 // presenters/resume_presenter.dart
+import '../models/company.dart';
 import '../models/resume.dart';
 import '../models/user.dart';
 import '../services/mock_api_service.dart';
@@ -30,10 +31,10 @@ class ResumePresenter {
     }
   }
 
-  Future<void> updateResume(int userId, String? about, String? phoneNumber) async {
+  Future<void> updateResume(int userId, Resume resume) async {
     _view?.showLoading();
     try {
-      await _api.updateResume(userId, about, phoneNumber);
+      await _api.updateResume(userId, resume);
       _view?.onResumeUpdated();
     } catch (e) {
       _view?.onError(e.toString());
@@ -41,4 +42,6 @@ class ResumePresenter {
       _view?.hideLoading();
     }
   }
+
+  Future<List<Company>> getCompanies() => _api.getCompanies();
 }

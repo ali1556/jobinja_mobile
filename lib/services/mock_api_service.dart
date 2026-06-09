@@ -423,28 +423,32 @@ class MockApiService {
     return allJobs.where((job) => job.companySlug == companySlug).toList();
   }
 
-  Future<Resume> getResume(User user) async {
-    final prefs = await SharedPreferences.getInstance();
-    final about = prefs.getString('resume_${user.id}_about');
-    final phone = prefs.getString('resume_${user.id}_phone');
-    return Resume(
-      id: user.id.toString(),
-      about: about,
-      phoneNumber: phone,
-    );
+  Future<List<Company>> getCompanies() async {
+    return [
+      Company(id: '1', name: 'Novin Tech', slug: 'novin-tech'),
+      Company(id: '2', name: 'Smart Data', slug: 'smart-data'),
+      Company(id: '3', name: 'Farda Design', slug: 'farda-design'),
+      Company(id: '4', name: 'MiliGold', slug: 'miliGold'),
+    ];
   }
 
-  Future<void> updateResume(int userId, String? about, String? phoneNumber) async {
+  Future<Resume> getResume(User user) async {
     final prefs = await SharedPreferences.getInstance();
-    if (about != null) {
-      await prefs.setString('resume_${userId}_about', about);
-    } else {
-      await prefs.remove('resume_${userId}_about');
+    final jsonString = prefs.getString('resume_${user.id}');
+    if (jsonString == null) {
+      return Resume(id: user.id.toString());
     }
-    if (phoneNumber != null) {
-      await prefs.setString('resume_${userId}_phone', phoneNumber);
-    } else {
-      await prefs.remove('resume_${userId}_phone');
+    try {
+      final Map<String, dynamic> map = jsonDecode(jsonString);
+      return Resume.fromJson(map);
+    } catch (e) {
+      return Resume(id: user.id.toString());
     }
+  }
+
+  Future<void> updateResume(int userId, Resume resume) async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonString = jsonEncode(resume.toJson());
+    await prefs.setString('resume_$userId', jsonString);
   }
 }
