@@ -1,4 +1,3 @@
-// views/resume_screen.dart
 import 'package:flutter/material.dart';
 import '../presenters/resume_presenter.dart';
 import '../models/user.dart';
@@ -23,7 +22,6 @@ class _ResumeScreenState extends State<ResumeScreen> implements ResumeView {
   String? _successMessage;
   List<Company> _companies = [];
 
-  // Controllers for dynamic fields
   final TextEditingController _aboutController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
 
@@ -48,13 +46,12 @@ class _ResumeScreenState extends State<ResumeScreen> implements ResumeView {
   }
 
   void _save() {
-    // Update resume object from controllers and lists
     _resume.about = _aboutController.text.trim().isEmpty ? null : _aboutController.text.trim();
     _resume.phoneNumber = _phoneController.text.trim().isEmpty ? null : _phoneController.text.trim();
     _presenter.updateResume(widget.user.id, _resume);
   }
 
-  // Language management
+
   void _addLanguage() {
     showDialog(
       context: context,
@@ -70,7 +67,7 @@ class _ResumeScreenState extends State<ResumeScreen> implements ResumeView {
     setState(() => _resume.languages.removeAt(index));
   }
 
-  // Skill management
+
   void _addSkill() {
     showDialog(
       context: context,
@@ -86,7 +83,7 @@ class _ResumeScreenState extends State<ResumeScreen> implements ResumeView {
     setState(() => _resume.skills.removeAt(index));
   }
 
-  // Work experience management
+
   void _addWorkExperience() {
     showDialog(
       context: context,
@@ -114,7 +111,6 @@ class _ResumeScreenState extends State<ResumeScreen> implements ResumeView {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Completion score card
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(12),
@@ -130,7 +126,6 @@ class _ResumeScreenState extends State<ResumeScreen> implements ResumeView {
               ),
             ),
             SizedBox(height: 16),
-            // About
             TextFormField(
               controller: _aboutController,
               decoration: InputDecoration(
@@ -140,7 +135,6 @@ class _ResumeScreenState extends State<ResumeScreen> implements ResumeView {
               maxLines: 4,
             ),
             SizedBox(height: 16),
-            // Phone
             TextFormField(
               controller: _phoneController,
               decoration: InputDecoration(
@@ -152,8 +146,6 @@ class _ResumeScreenState extends State<ResumeScreen> implements ResumeView {
               validator: (v) => v != null && v.isNotEmpty ? Validators.phone(v) : null,
             ),
             SizedBox(height: 24),
-
-            // Languages section
             _buildSectionTitle('Languages', Icons.language, _addLanguage),
             ..._resume.languages.asMap().entries.map((entry) {
               int idx = entry.key;
@@ -166,8 +158,6 @@ class _ResumeScreenState extends State<ResumeScreen> implements ResumeView {
             if (_resume.languages.isEmpty) Text('No languages added', style: TextStyle(color: Colors.grey)),
 
             SizedBox(height: 16),
-
-            // Skills section
             _buildSectionTitle('Skills', Icons.build, _addSkill),
             Wrap(
               spacing: 8,
@@ -183,8 +173,6 @@ class _ResumeScreenState extends State<ResumeScreen> implements ResumeView {
             if (_resume.skills.isEmpty) Text('No skills added', style: TextStyle(color: Colors.grey)),
 
             SizedBox(height: 16),
-
-            // Work Experience section
             _buildSectionTitle('Work Experience', Icons.work, _addWorkExperience),
             ..._resume.workExperiences.asMap().entries.map((entry) {
               int idx = entry.key;
@@ -226,11 +214,8 @@ class _ResumeScreenState extends State<ResumeScreen> implements ResumeView {
 
   String _formatDate(DateTime date) => '${date.year}-${date.month.toString().padLeft(2, '0')}';
 
-  // ResumeView implementation
-  @override
-  void showLoading() => setState(() => _isLoading = true);
-  @override
-  void hideLoading() => setState(() => _isLoading = false);
+  @override void showLoading() => setState(() => _isLoading = true);
+  @override void hideLoading() => setState(() => _isLoading = false);
   @override
   void onResumeLoaded(Resume resume) {
     setState(() {
@@ -254,7 +239,7 @@ class _ResumeScreenState extends State<ResumeScreen> implements ResumeView {
   void onError(String message) => setState(() => _error = message);
 }
 
-// Dialog for adding a language
+
 class _LanguageDialog extends StatefulWidget {
   final Function(Language) onAdd;
   const _LanguageDialog({required this.onAdd});
@@ -300,7 +285,7 @@ class __LanguageDialogState extends State<_LanguageDialog> {
   }
 }
 
-// Dialog for adding a skill
+
 class _SkillDialog extends StatelessWidget {
   final Function(String) onAdd;
   final TextEditingController _controller = TextEditingController();
@@ -327,7 +312,7 @@ class _SkillDialog extends StatelessWidget {
   }
 }
 
-// Dialog for adding work experience
+
 class _WorkExperienceDialog extends StatefulWidget {
   final List<Company> companies;
   final Function(WorkExperience) onAdd;

@@ -1,4 +1,3 @@
-// presenters/resume_presenter.dart
 import '../models/company.dart';
 import '../models/resume.dart';
 import '../models/user.dart';

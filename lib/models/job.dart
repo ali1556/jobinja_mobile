@@ -11,9 +11,9 @@ class Job {
   final String publishedAt;
   final bool isRemote;
   final String? description;
-  final int? minSalary;      // numeric min salary (in millions or raw)
-  final int? maxSalary;      // optional
-  final DateTime publishedAtDate; // parsed date for sorting
+  final int? minSalary;
+  final int? maxSalary;
+  final DateTime publishedAtDate;
 
   Job({
     required this.id,

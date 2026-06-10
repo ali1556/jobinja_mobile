@@ -63,7 +63,6 @@ class _ProfileScreenState extends State<ProfileScreen> implements ProfileView {
                 child: ListTile(leading: Icon(Icons.email_outlined, color: Colors.blue.shade700), title: Text('Email'), subtitle: Text(_user!.email)),
               ),
               SizedBox(height: 24),
-              // Edit Profile
               ElevatedButton.icon(
                 onPressed: () async {
                   final result = await Navigator.push(context, MaterialPageRoute(builder: (_) => EditProfileScreen(user: _user!)));
@@ -74,7 +73,6 @@ class _ProfileScreenState extends State<ProfileScreen> implements ProfileView {
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.blue, minimumSize: Size(double.infinity, 48), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
               ),
               SizedBox(height: 12),
-              // Applied Jobs
               ElevatedButton.icon(
                 onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AppliedJobsScreen())),
                 icon: Icon(Icons.list_alt),
@@ -82,7 +80,6 @@ class _ProfileScreenState extends State<ProfileScreen> implements ProfileView {
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.blue, minimumSize: Size(double.infinity, 48), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
               ),
               SizedBox(height: 12),
-              // Job Alerts
               ElevatedButton.icon(
                 onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => JobAlertsScreen())),
                 icon: Icon(Icons.notifications_active),
@@ -90,7 +87,6 @@ class _ProfileScreenState extends State<ProfileScreen> implements ProfileView {
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.blue, minimumSize: Size(double.infinity, 48), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
               ),
               SizedBox(height: 12),
-              // Contact Us
               ElevatedButton.icon(
                 onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ContactScreen())),
                 icon: Icon(Icons.contact_mail),

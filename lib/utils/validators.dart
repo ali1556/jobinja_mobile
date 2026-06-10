@@ -18,7 +18,7 @@ class Validators {
   }
 
   static String? phone(String? value) {
-    if (value == null || value.isEmpty) return null; // optional field
+    if (value == null || value.isEmpty) return null;
     final regex = RegExp(r'^[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}$');
     if (!regex.hasMatch(value)) return 'Invalid phone number';
     return null;

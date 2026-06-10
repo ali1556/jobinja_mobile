@@ -5,7 +5,7 @@ class User {
   final String name;
   final String email;
   final String? avatar;
-  final Resume? resume; // new field
+  final Resume? resume;
 
   User({
     required this.id,

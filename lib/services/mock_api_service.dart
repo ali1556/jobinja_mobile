@@ -12,7 +12,7 @@ class MockApiService {
 
   MockApiService();
 
-  // ----- Authentication helpers -----
+
   Future<Map<String, dynamic>> signup(String name, String email,
       String password) async {
     await Future.delayed(const Duration(seconds: 1));
@@ -29,7 +29,7 @@ class MockApiService {
     int newId = (prefs.getInt('next_user_id') ?? 1);
     await prefs.setInt('next_user_id', newId + 1);
 
-    // Save user info
+
     await prefs.setString('user_${newId}_name', name.trim());
     await prefs.setString('user_${newId}_email', normalizedEmail);
     await prefs.setString('pass_$normalizedEmail', password);
@@ -52,7 +52,6 @@ class MockApiService {
       throw Exception('Invalid email or password');
     }
 
-    // Find user id by scanning keys (simple for mock)
     int? userId;
     final keys = prefs.getKeys();
     for (String key in keys) {
@@ -97,7 +96,7 @@ class MockApiService {
     return _currentUser!;
   }
 
-  // ----- Profile update -----
+
   Future<User> updateUserProfile(String name, String email,
       {String? avatarPath}) async {
     final user = await getCurrentUser();
@@ -105,7 +104,6 @@ class MockApiService {
     final normalizedEmail = email.trim().toLowerCase();
     await prefs.setString('user_${user.id}_name', name.trim());
     await prefs.setString('user_${user.id}_email', normalizedEmail);
-    // if email changed, update password key as well
     if (user.email != normalizedEmail) {
       final oldPass = prefs.getString('pass_${user.email}');
       if (oldPass != null) {
@@ -121,7 +119,6 @@ class MockApiService {
     return updatedUser;
   }
 
-  // ----- Applied Jobs -----
   Future<void> applyToJob(String jobId) async {
     final prefs = await SharedPreferences.getInstance();
     List<String> applied = prefs.getStringList('applied_jobs') ?? [];
@@ -138,7 +135,6 @@ class MockApiService {
     return allJobs.where((job) => appliedIds.contains(job.id)).toList();
   }
 
-  // ----- Job Alerts -----
   Future<List<Map<String, dynamic>>> getJobAlerts() async {
     final prefs = await SharedPreferences.getInstance();
     final alertsJson = prefs.getStringList('job_alerts') ?? [];
@@ -172,7 +168,6 @@ class MockApiService {
     await prefs.setStringList('job_alerts', alertsJson);
   }
 
-  // ----- Utility -----
   Future<void> sendContact(String name, String email, String message) async {
     await Future.delayed(const Duration(milliseconds: 800));
     if (name
@@ -184,7 +179,6 @@ class MockApiService {
         .isEmpty) {
       throw Exception('All fields are required');
     }
-    // Mock success
   }
 
   Future<Map<String, dynamic>> getJobs({
@@ -199,42 +193,34 @@ class MockApiService {
     await Future.delayed(const Duration(seconds: 1));
     List<Job> mockJobs = await _createMockJobs(); // extract existing mock creation into a method
 
-    // Filter by keyword
     if (keyword != null && keyword.isNotEmpty) {
       mockJobs = mockJobs.where((job) =>
       job.title.toLowerCase().contains(keyword.toLowerCase()) ||
           job.companyName.toLowerCase().contains(keyword.toLowerCase())).toList();
     }
 
-    // Filter by location
     if (location != null && location.isNotEmpty) {
       mockJobs = mockJobs.where((job) =>
           job.location.toLowerCase().contains(location.toLowerCase())).toList();
     }
 
-    // Filter by minSalary
     if (minSalary != null) {
       mockJobs = mockJobs.where((job) =>
       job.minSalary != null && job.minSalary! >= minSalary).toList();
     }
 
-    // Filter by remote
     if (isRemote == true) {
       mockJobs = mockJobs.where((job) => job.isRemote).toList();
     }
 
-    // Sorting
-    if (sortBy == 'publishedAt') {
-      mockJobs.sort((a, b) => b.publishedAtDate!.compareTo(a.publishedAtDate!));
-    } else if (sortBy == 'salary') {
+    if (sortBy == 'salary') {
       mockJobs.sort((a, b) {
         final aSal = a.minSalary ?? 0;
         final bSal = b.minSalary ?? 0;
         return bSal.compareTo(aSal);
       });
     } else {
-      // default sort by publishedAt desc
-      mockJobs.sort((a, b) => b.publishedAtDate!.compareTo(a.publishedAtDate!));
+      mockJobs.sort((a, b) => b.publishedAtDate.compareTo(a.publishedAtDate));
     }
 
     final totalCount = mockJobs.length;

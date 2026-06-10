@@ -50,7 +50,6 @@ class _HomeScreenState extends State<HomeScreen> implements JobView {
     _loadJobs();
   }
 
-  // Advanced filter bottom sheet (includes location, min salary, remote, sort)
   void _showFilterSheet() {
     showModalBottomSheet(
       context: context,
@@ -76,7 +75,6 @@ class _HomeScreenState extends State<HomeScreen> implements JobView {
                 children: [
                   Text('Filter & Sort Jobs', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                   SizedBox(height: 16),
-                  // Location dropdown
                   DropdownButtonFormField<String>(
                     value: tempLocation.isEmpty ? null : tempLocation,
                     hint: Text('All provinces'),
@@ -87,20 +85,17 @@ class _HomeScreenState extends State<HomeScreen> implements JobView {
                     decoration: InputDecoration(labelText: 'Location', border: OutlineInputBorder()),
                   ),
                   SizedBox(height: 12),
-                  // Minimum salary
                   TextField(
                     decoration: InputDecoration(labelText: 'Minimum Salary (Million)'),
                     keyboardType: TextInputType.number,
                     onChanged: (val) => setSheetState(() => tempMinSalary = int.tryParse(val) ?? 0),
                   ),
                   SizedBox(height: 12),
-                  // Remote only checkbox
                   Row(children: [
                     Checkbox(value: tempRemote, onChanged: (val) => setSheetState(() => tempRemote = val!)),
                     Text('Remote only'),
                   ]),
                   SizedBox(height: 12),
-                  // Sort by
                   DropdownButtonFormField<String>(
                     value: tempSortBy,
                     items: [
@@ -156,10 +151,6 @@ class _HomeScreenState extends State<HomeScreen> implements JobView {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.filter_alt, color: Colors.blue.shade700),
-            onPressed: _showFilterSheet,
-          ),
-          IconButton(
             icon: Icon(Icons.person, color: Colors.blue.shade700),
             onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ProfileScreen())),
           ),
@@ -167,7 +158,6 @@ class _HomeScreenState extends State<HomeScreen> implements JobView {
       ),
       body: Column(
         children: [
-          // Search bar only (location filter moved to bottom sheet)
           Container(
             padding: EdgeInsets.all(12),
             decoration: BoxDecoration(color: Colors.white, boxShadow: [BoxShadow(color: Colors.grey.shade200, blurRadius: 4, offset: Offset(0, 2))]),
@@ -197,7 +187,6 @@ class _HomeScreenState extends State<HomeScreen> implements JobView {
               ],
             ),
           ),
-          // Job list
           Expanded(
             child: _isLoading
                 ? LoadingWidget()

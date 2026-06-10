@@ -14,7 +14,7 @@ class JobinjaApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
         brightness: Brightness.light,
-        fontFamily: 'Poppins', // optional: add Google Fonts package
+        fontFamily: 'Poppins',
         appBarTheme: AppBarTheme(
           elevation: 0,
           centerTitle: true,
