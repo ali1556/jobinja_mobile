@@ -221,7 +221,7 @@ class MockApiService {
       Job(id: 'job_4',
           title: 'AI Developer',
           companyName: 'MiliGold',
-          companySlug: 'MiliGold',
+          companySlug: 'miliGold',
           location: 'Tehran',
           contractType: 'Full-time',
           salaryDisplay: 'Negotiable',
@@ -407,10 +407,12 @@ class MockApiService {
 
   Future<Company> getCompany(String slug) async {
     await Future.delayed(const Duration(milliseconds: 800));
+    final allCompanies = await getCompanies();
+    final company = allCompanies.firstWhere((c) => c.slug == slug);
     return Company(
-      id: 'comp_1',
-      name: slug == 'novin-tech' ? 'Novin Tech' : 'Sample Company',
-      slug: slug,
+      id: company.id,
+      name: company.name,
+      slug: company.slug,
       logo: null,
       industry: 'Information Technology',
       website: 'https://example.com',
@@ -429,6 +431,22 @@ class MockApiService {
       Company(id: '2', name: 'Smart Data', slug: 'smart-data'),
       Company(id: '3', name: 'Farda Design', slug: 'farda-design'),
       Company(id: '4', name: 'MiliGold', slug: 'miliGold'),
+      Company(id: '5', name: 'TechHub', slug: 'techhub'),
+      Company(id: '6', name: 'Cloudify', slug: 'cloudify'),
+      Company(id: '7', name: 'WebArt', slug: 'webart'),
+      Company(id: '8', name: 'DataMind', slug: 'datamind'),
+      Company(id: '9', name: 'Innovatech', slug: 'innovatech'),
+      Company(id: '10', name: 'QualitySoft', slug: 'qualitysoft'),
+      Company(id: '11', name: 'AppleTech', slug: 'appletech'),
+      Company(id: '12', name: 'SecureNet', slug: 'securenet'),
+      Company(id: '13', name: 'LeadPro', slug: 'leadpro'),
+      Company(id: '14', name: 'DataCare', slug: 'datacare'),
+      Company(id: '15', name: 'AgileWorks', slug: 'agileworks'),
+      Company(id: '16', name: 'DeepThink', slug: 'deepthink'),
+      Company(id: '17', name: 'DocuMint', slug: 'documint'),
+      Company(id: '18', name: 'MarketLeader', slug: 'marketleader'),
+      Company(id: '19', name: 'HelpDesk', slug: 'helpdesk'),
+      Company(id: '20', name: 'PeopleFirst', slug: 'peoplefirst')
     ];
   }
 
