@@ -1,7 +1,7 @@
 import '../services/mock_api_service.dart';
 import '../models/job.dart';
 
-abstract class JobView { void showLoading(); void hideLoading(); void showJobs(List<Job> jobs); void onError(String message); }
+abstract class JobView { void showLoading(); void hideLoading(); void showJobs(List<Job> jobs, int totalCount, int currentPage); void onError(String message); }
 abstract class JobDetailView { void showLoading(); void hideLoading(); void onJobLoaded(Job job); void onError(String message); }
 abstract class AppliedJobsView { void showLoading(); void hideLoading(); void showAppliedJobs(List<Job> jobs); void onError(String message); }
 
@@ -18,11 +18,32 @@ class JobPresenter {
   void attachAppliedJobsView(AppliedJobsView view) => _appliedJobsView = view;
   void detachAppliedJobsView() => _appliedJobsView = null;
 
-  Future<void> loadJobs({String? keyword, String? location}) async {
+  Future<void> loadJobs({
+    String? keyword,
+    String? location,
+    int? minSalary,
+    bool? isRemote,
+    String? sortBy,
+    int page = 1,
+    int pageSize = 10,
+  }) async {
     _view?.showLoading();
-    try { final jobs = await _api.getJobs(keyword: keyword, location: location); _view?.showJobs(jobs); }
-    catch (e) { _view?.onError(e.toString()); }
-    finally { _view?.hideLoading(); }
+    try {
+      final result = await _api.getJobs(
+        keyword: keyword,
+        location: location,
+        minSalary: minSalary,
+        isRemote: isRemote,
+        sortBy: sortBy,
+        page: page,
+        pageSize: pageSize,
+      );
+      _view?.showJobs(result['jobs'] as List<Job>, result['totalCount'] as int, result['page'] as int);
+    } catch (e) {
+      _view?.onError(e.toString());
+    } finally {
+      _view?.hideLoading();
+    }
   }
 
   Future<void> getJobDetail(String jobId) async {

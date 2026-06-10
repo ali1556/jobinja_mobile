@@ -1,3 +1,4 @@
+// models/job.dart
 class Job {
   final String id;
   final String title;
@@ -10,6 +11,9 @@ class Job {
   final String publishedAt;
   final bool isRemote;
   final String? description;
+  final int? minSalary;      // numeric min salary (in millions or raw)
+  final int? maxSalary;      // optional
+  final DateTime publishedAtDate; // parsed date for sorting
 
   Job({
     required this.id,
@@ -23,21 +27,9 @@ class Job {
     required this.publishedAt,
     this.isRemote = false,
     this.description,
+    this.minSalary,
+    this.maxSalary,
+    required this.publishedAtDate,
   });
 
-  factory Job.fromJson(Map<String, dynamic> json) {
-    return Job(
-      id: json['id'],
-      title: json['title'],
-      companyName: json['company']['name'],
-      companySlug: json['company']['slug'],
-      companyLogo: json['company']['logo'],
-      location: json['location']['province'] + (json['location']['city'] != null ? ' - ${json['location']['city']}' : ''),
-      contractType: json['contract_type'],
-      salaryDisplay: json['salary']['display'],
-      publishedAt: json['published_at'],
-      isRemote: json['is_remote'] ?? false,
-      description: json['description'],
-    );
-  }
 }

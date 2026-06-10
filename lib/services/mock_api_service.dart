@@ -134,7 +134,7 @@ class MockApiService {
   Future<List<Job>> getAppliedJobs() async {
     final prefs = await SharedPreferences.getInstance();
     final appliedIds = prefs.getStringList('applied_jobs') ?? [];
-    final allJobs = await getJobs();
+    final allJobs = await _createMockJobs();
     return allJobs.where((job) => appliedIds.contains(job.id)).toList();
   }
 
@@ -187,8 +187,70 @@ class MockApiService {
     // Mock success
   }
 
-  Future<List<Job>> getJobs(
-      {int page = 1, String? keyword, String? location}) async {
+  Future<Map<String, dynamic>> getJobs({
+    int page = 1,
+    int pageSize = 10,
+    String? keyword,
+    String? location,
+    int? minSalary,
+    bool? isRemote,
+    String? sortBy, // 'publishedAt' or 'salary'
+  }) async {
+    await Future.delayed(const Duration(seconds: 1));
+    List<Job> mockJobs = await _createMockJobs(); // extract existing mock creation into a method
+
+    // Filter by keyword
+    if (keyword != null && keyword.isNotEmpty) {
+      mockJobs = mockJobs.where((job) =>
+      job.title.toLowerCase().contains(keyword.toLowerCase()) ||
+          job.companyName.toLowerCase().contains(keyword.toLowerCase())).toList();
+    }
+
+    // Filter by location
+    if (location != null && location.isNotEmpty) {
+      mockJobs = mockJobs.where((job) =>
+          job.location.toLowerCase().contains(location.toLowerCase())).toList();
+    }
+
+    // Filter by minSalary
+    if (minSalary != null) {
+      mockJobs = mockJobs.where((job) =>
+      job.minSalary != null && job.minSalary! >= minSalary).toList();
+    }
+
+    // Filter by remote
+    if (isRemote == true) {
+      mockJobs = mockJobs.where((job) => job.isRemote).toList();
+    }
+
+    // Sorting
+    if (sortBy == 'publishedAt') {
+      mockJobs.sort((a, b) => b.publishedAtDate!.compareTo(a.publishedAtDate!));
+    } else if (sortBy == 'salary') {
+      mockJobs.sort((a, b) {
+        final aSal = a.minSalary ?? 0;
+        final bSal = b.minSalary ?? 0;
+        return bSal.compareTo(aSal);
+      });
+    } else {
+      // default sort by publishedAt desc
+      mockJobs.sort((a, b) => b.publishedAtDate!.compareTo(a.publishedAtDate!));
+    }
+
+    final totalCount = mockJobs.length;
+    final start = (page - 1) * pageSize;
+    final end = start + pageSize;
+    final paginatedJobs = mockJobs.sublist(start, end > totalCount ? totalCount : end);
+
+    return {
+      'jobs': paginatedJobs,
+      'totalCount': totalCount,
+      'page': page,
+      'pageSize': pageSize,
+    };
+  }
+
+  Future<List<Job>> _createMockJobs() async {
     await Future.delayed(const Duration(seconds: 1));
     List<Job> mockJobs = [
       Job(id: 'job_1',
@@ -199,7 +261,10 @@ class MockApiService {
           contractType: 'Full-time',
           salaryDisplay: 'Negotiable',
           publishedAt: '2025-03-01',
-          isRemote: true),
+          isRemote: true,
+          minSalary: null,
+          maxSalary: null,
+          publishedAtDate:DateTime(2025, 3, 1)),
       Job(id: 'job_2',
           title: 'Python Developer',
           companyName: 'Smart Data',
@@ -208,7 +273,10 @@ class MockApiService {
           contractType: 'Remote',
           salaryDisplay: '15-20 Million',
           publishedAt: '2025-02-28',
-          isRemote: true),
+          isRemote: true,
+          minSalary: 15,
+          maxSalary: 20,
+          publishedAtDate:DateTime(2025, 2, 28)),
       Job(id: 'job_3',
           title: 'UI/UX Designer',
           companyName: 'Farda Design',
@@ -217,7 +285,10 @@ class MockApiService {
           contractType: 'Part-time',
           salaryDisplay: '8-12 Million',
           publishedAt: '2025-03-03',
-          isRemote: false),
+          isRemote: false,
+          minSalary: 8,
+          maxSalary: 12,
+          publishedAtDate:DateTime(2025, 3, 3)),
       Job(id: 'job_4',
           title: 'AI Developer',
           companyName: 'MiliGold',
@@ -226,7 +297,10 @@ class MockApiService {
           contractType: 'Full-time',
           salaryDisplay: 'Negotiable',
           publishedAt: '2025-03-14',
-          isRemote: false),
+          isRemote: false,
+          minSalary: null,
+          maxSalary: null,
+          publishedAtDate:DateTime(2025, 3, 14)),
 
       Job(id: 'job_5',
           title: 'Backend Engineer (Node.js)',
@@ -236,7 +310,10 @@ class MockApiService {
           contractType: 'Full-time',
           salaryDisplay: '25-35 Million',
           publishedAt: '2025-03-10',
-          isRemote: false),
+          isRemote: false,
+          minSalary: 25,
+          maxSalary: 35,
+          publishedAtDate:DateTime(2025, 3, 1)),
       Job(id: 'job_6',
           title: 'DevOps Engineer',
           companyName: 'Cloudify',
@@ -245,7 +322,10 @@ class MockApiService {
           contractType: 'Full-time',
           salaryDisplay: '30-40 Million',
           publishedAt: '2025-03-12',
-          isRemote: true),
+          isRemote: true,
+          minSalary: 30,
+          maxSalary: 40,
+          publishedAtDate:DateTime(2025, 3, 12)),
       Job(id: 'job_7',
           title: 'Frontend Developer (React)',
           companyName: 'WebArt',
@@ -254,7 +334,10 @@ class MockApiService {
           contractType: 'Full-time',
           salaryDisplay: '20-30 Million',
           publishedAt: '2025-03-05',
-          isRemote: false),
+          isRemote: false,
+          minSalary: 20,
+          maxSalary: 30,
+          publishedAtDate:DateTime(2025, 3, 5)),
       Job(id: 'job_8',
           title: 'Data Scientist',
           companyName: 'DataMind',
@@ -263,7 +346,10 @@ class MockApiService {
           contractType: 'Full-time',
           salaryDisplay: '40-60 Million',
           publishedAt: '2025-02-25',
-          isRemote: true),
+          isRemote: true,
+          minSalary: 40,
+          maxSalary: 60,
+          publishedAtDate:DateTime(2025, 2, 25)),
       Job(id: 'job_9',
           title: 'Product Manager',
           companyName: 'Innovatech',
@@ -272,7 +358,10 @@ class MockApiService {
           contractType: 'Full-time',
           salaryDisplay: '50-70 Million',
           publishedAt: '2025-03-07',
-          isRemote: false),
+          isRemote: false,
+          minSalary: 50,
+          maxSalary: 70,
+          publishedAtDate:DateTime(2025, 3, 7)),
       Job(id: 'job_10',
           title: 'QA Engineer',
           companyName: 'QualitySoft',
@@ -281,7 +370,10 @@ class MockApiService {
           contractType: 'Full-time',
           salaryDisplay: '15-22 Million',
           publishedAt: '2025-03-09',
-          isRemote: true),
+          isRemote: true,
+          minSalary: 15,
+          maxSalary: 22,
+          publishedAtDate:DateTime(2025, 3, 9)),
       Job(id: 'job_11',
           title: 'Mobile Developer (iOS)',
           companyName: 'AppleTech',
@@ -290,7 +382,10 @@ class MockApiService {
           contractType: 'Full-time',
           salaryDisplay: '35-45 Million',
           publishedAt: '2025-02-20',
-          isRemote: false),
+          isRemote: false,
+          minSalary: 35,
+          maxSalary: 45,
+          publishedAtDate:DateTime(2025, 2, 20)),
       Job(id: 'job_12',
           title: 'Security Analyst',
           companyName: 'SecureNet',
@@ -299,7 +394,10 @@ class MockApiService {
           contractType: 'Full-time',
           salaryDisplay: '28-38 Million',
           publishedAt: '2025-03-15',
-          isRemote: true),
+          isRemote: true,
+          minSalary: 28,
+          maxSalary: 38,
+          publishedAtDate:DateTime(2025, 3, 15)),
       Job(id: 'job_13',
           title: 'Project Manager',
           companyName: 'LeadPro',
@@ -308,7 +406,10 @@ class MockApiService {
           contractType: 'Full-time',
           salaryDisplay: '45-55 Million',
           publishedAt: '2025-03-11',
-          isRemote: false),
+          isRemote: false,
+          minSalary: 45,
+          maxSalary: 55,
+          publishedAtDate:DateTime(2025, 3, 11)),
       Job(id: 'job_14',
           title: 'Database Administrator',
           companyName: 'DataCare',
@@ -317,7 +418,10 @@ class MockApiService {
           contractType: 'Full-time',
           salaryDisplay: '22-32 Million',
           publishedAt: '2025-03-08',
-          isRemote: false),
+          isRemote: false,
+          minSalary: 22,
+          maxSalary: 32,
+          publishedAtDate:DateTime(2025, 3, 8)),
       Job(id: 'job_15',
           title: 'Scrum Master',
           companyName: 'AgileWorks',
@@ -326,7 +430,10 @@ class MockApiService {
           contractType: 'Full-time',
           salaryDisplay: '35-45 Million',
           publishedAt: '2025-03-13',
-          isRemote: true),
+          isRemote: true,
+          minSalary: 35,
+          maxSalary: 45,
+          publishedAtDate:DateTime(2025, 3, 13)),
       Job(id: 'job_16',
           title: 'Machine Learning Engineer',
           companyName: 'DeepThink',
@@ -335,7 +442,10 @@ class MockApiService {
           contractType: 'Full-time',
           salaryDisplay: '50-70 Million',
           publishedAt: '2025-02-18',
-          isRemote: true),
+          isRemote: true,
+          minSalary: 50,
+          maxSalary: 70,
+          publishedAtDate:DateTime(2025, 2, 18)),
       Job(id: 'job_17',
           title: 'Technical Writer',
           companyName: 'DocuMint',
@@ -344,7 +454,10 @@ class MockApiService {
           contractType: 'Part-time',
           salaryDisplay: '10-15 Million',
           publishedAt: '2025-03-16',
-          isRemote: true),
+          isRemote: true,
+          minSalary: 10,
+          maxSalary: 15,
+          publishedAtDate:DateTime(2025, 3, 16)),
       Job(id: 'job_18',
           title: 'Sales Manager',
           companyName: 'MarketLeader',
@@ -353,7 +466,10 @@ class MockApiService {
           contractType: 'Full-time',
           salaryDisplay: '30-40 Million',
           publishedAt: '2025-03-04',
-          isRemote: false),
+          isRemote: false,
+          minSalary: 30,
+          maxSalary: 40,
+          publishedAtDate:DateTime(2025, 3, 4)),
       Job(id: 'job_19',
           title: 'Customer Support',
           companyName: 'HelpDesk',
@@ -362,7 +478,10 @@ class MockApiService {
           contractType: 'Part-time',
           salaryDisplay: '8-12 Million',
           publishedAt: '2025-03-17',
-          isRemote: true),
+          isRemote: true,
+          minSalary: 8,
+          maxSalary: 12,
+          publishedAtDate:DateTime(2025, 3, 17)),
       Job(id: 'job_20',
           title: 'HR Specialist',
           companyName: 'PeopleFirst',
@@ -371,25 +490,17 @@ class MockApiService {
           contractType: 'Full-time',
           salaryDisplay: '18-25 Million',
           publishedAt: '2025-03-06',
-          isRemote: false),
+          isRemote: false,
+          minSalary: 18,
+          maxSalary: 25,
+          publishedAtDate:DateTime(2025, 3, 6)),
     ];
-    if (keyword != null && keyword.isNotEmpty) {
-      mockJobs = mockJobs
-          .where((job) =>
-      job.title.toLowerCase().contains(keyword.toLowerCase()) ||
-          job.companyName.toLowerCase().contains(keyword.toLowerCase()))
-          .toList();
-    }
-    if (location != null && location.isNotEmpty) {
-      mockJobs = mockJobs.where((job) =>
-          job.location.toLowerCase().contains(location.toLowerCase())).toList();
-    }
     return mockJobs;
   }
 
   Future<Job> getJobDetail(String jobId) async {
     await Future.delayed(const Duration(milliseconds: 800));
-    final allJobs = await getJobs();
+    final allJobs = await _createMockJobs();
     final job = allJobs.firstWhere((j) => j.id == jobId);
     return Job(
       id: job.id,
@@ -402,6 +513,9 @@ class MockApiService {
       publishedAt: job.publishedAt,
       isRemote: job.isRemote,
       description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+      minSalary: job.minSalary,
+      maxSalary: job.maxSalary,
+      publishedAtDate: job.publishedAtDate
     );
   }
 
@@ -421,7 +535,7 @@ class MockApiService {
   }
 
   Future<List<Job>> getCompanyJobs(String companySlug) async {
-    final allJobs = await getJobs();
+    final allJobs = await _createMockJobs();
     return allJobs.where((job) => job.companySlug == companySlug).toList();
   }
 
